@@ -1,29 +1,13 @@
+import { lazy, Suspense } from 'react'
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom'
 import './App.css'
 
-function HomePage() {
-  return <h2>Home Page</h2>
-}
-
-function AboutPage() {
-  return <h2>About Page</h2>
-}
-
-function ServicesPage() {
-  return <h2>Services Page</h2>
-}
-
-function BlogPage() {
-  return <h2>Blog Page</h2>
-}
-
-function ContactPage() {
-  return <h2>Contact Page</h2>
-}
-
-function NotFoundPage() {
-  return <h2>Page not found</h2>
-}
+const HomePage = lazy(() => import('./pages/HomePage.jsx'))
+const AboutPage = lazy(() => import('./pages/AboutPage.jsx'))
+const ServicesPage = lazy(() => import('./pages/ServicesPage.jsx'))
+const BlogPage = lazy(() => import('./pages/BlogPage.jsx'))
+const ContactPage = lazy(() => import('./pages/ContactPage.jsx'))
+const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx'))
 
 function AppLayout() {
   const links = [
@@ -53,14 +37,16 @@ function AppLayout() {
       </header>
 
       <main className="page-content">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/about" element={<AboutPage />} />
-          <Route path="/services" element={<ServicesPage />} />
-          <Route path="/blog" element={<BlogPage />} />
-          <Route path="/contact" element={<ContactPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
+        <Suspense fallback={<p>Loading page...</p>}>
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/about" element={<AboutPage />} />
+            <Route path="/services" element={<ServicesPage />} />
+            <Route path="/blog" element={<BlogPage />} />
+            <Route path="/contact" element={<ContactPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        </Suspense>
       </main>
     </div>
   )
