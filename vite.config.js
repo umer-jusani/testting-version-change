@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-const buildVersion = '3'
+const buildVersion = '4'
 const versionStateFile = '.vite-file-versions.json'
 
 const normalizePath = (value) => value.replaceAll('\\', '/')
@@ -29,6 +29,30 @@ const isTextAsset = (fileName) => /\.(css|js|html|json|map|svg|txt)$/i.test(file
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const stripAssetsPrefix = (value) => value.replace(/^assets\//, '')
 const isJavaScriptFile = (fileName) => /\.js$/i.test(fileName)
+const toRelativeKeyPath = (absoluteOrRelativePath, rootDir) => {
+  if (!absoluteOrRelativePath) return ''
+  const relative = path.isAbsolute(absoluteOrRelativePath)
+    ? path.relative(rootDir, absoluteOrRelativePath)
+    : absoluteOrRelativePath
+  return normalizePath(relative)
+}
+const findPreviousStateEntry = (state, key) => {
+  if (state[key]) return state[key]
+
+  const separatorIndex = key.indexOf(':')
+  if (separatorIndex === -1) return undefined
+
+  const kind = key.slice(0, separatorIndex + 1)
+  const target = key.slice(separatorIndex + 1).toLowerCase()
+  for (const [existingKey, value] of Object.entries(state)) {
+    if (!existingKey.startsWith(kind)) continue
+    const existingPath = existingKey.slice(separatorIndex + 1).toLowerCase()
+    if (existingPath === target || existingPath.endsWith(`/${target}`)) {
+      return value
+    }
+  }
+  return undefined
+}
 
 const selectiveVersionPlugin = (selectedVersion) => {
   let rootDir = process.cwd()
@@ -64,8 +88,8 @@ const selectiveVersionPlugin = (selectedVersion) => {
         const normalizedOld = normalizePath(oldFileName)
         const fileNameWithoutVersion = stripVersionTag(normalizedOld)
         const key = item.type === 'chunk'
-          ? `chunk:${normalizePath(item.facadeModuleId || item.name || fileNameWithoutVersion)}`
-          : `asset:${normalizePath(item.name || fileNameWithoutVersion)}`
+          ? `chunk:${toRelativeKeyPath(item.facadeModuleId || item.name || fileNameWithoutVersion, rootDir)}`
+          : `asset:${toRelativeKeyPath(item.name || fileNameWithoutVersion, rootDir)}`
 
         if (fileNameWithoutVersion.endsWith('.gif')) {
           const hash = sha1(asBuffer(item.type === 'chunk' ? item.code : item.source))
@@ -79,7 +103,7 @@ const selectiveVersionPlugin = (selectedVersion) => {
         }
 
         const contentHash = sha1(asBuffer(item.type === 'chunk' ? item.code : item.source))
-        const prev = previousState[key]
+        const prev = findPreviousStateEntry(previousState, key)
         const versionToUse = prev && prev.hash === contentHash ? prev.version : selectedVersion
 
         // Keep non-JS assets (like CSS) unversioned.

@@ -1,35 +1,35 @@
 {
-  "chunk:C:/Users/Admin/Desktop/testing/index.html": {
+  "chunk:index.html": {
     "hash": "741992c8f47eb38189db4f289d5f20253ac67830",
     "version": "1",
     "fileName": "assets/index.v1.js"
   },
-  "chunk:C:/Users/Admin/Desktop/testing/src/pages/HomePage.jsx": {
+  "chunk:src/pages/HomePage.jsx": {
     "hash": "232294cf1398191edbf5797e696babb2eeb6010f",
     "version": "1",
     "fileName": "assets/HomePage.v1.js"
   },
-  "chunk:C:/Users/Admin/Desktop/testing/src/pages/AboutPage.jsx": {
+  "chunk:src/pages/AboutPage.jsx": {
     "hash": "e47627f2188bceb829ec073897a17e0a78b8308f",
     "version": "1",
     "fileName": "assets/AboutPage.v1.js"
   },
-  "chunk:C:/Users/Admin/Desktop/testing/src/pages/ServicesPage.jsx": {
+  "chunk:src/pages/ServicesPage.jsx": {
     "hash": "a4bb7225c297581d7c6bc17678d60e1c3c5e7f72",
     "version": "1",
     "fileName": "assets/ServicesPage.v1.js"
   },
-  "chunk:C:/Users/Admin/Desktop/testing/src/pages/BlogPage.jsx": {
+  "chunk:src/pages/BlogPage.jsx": {
     "hash": "d0466a1ca4c6df1cfbd01f9ddf745fc5b56f668d",
     "version": "1",
     "fileName": "assets/BlogPage.v1.js"
   },
-  "chunk:C:/Users/Admin/Desktop/testing/src/pages/ContactPage.jsx": {
-    "hash": "54209570b930c3e1c9329190bb76a710b58066b2",
-    "version": "2",
-    "fileName": "assets/ContactPage.v2.js"
+  "chunk:src/pages/ContactPage.jsx": {
+    "hash": "e619171c0ecabdb9ae1408afe90399ba930682bb",
+    "version": "4",
+    "fileName": "assets/ContactPage.v4.js"
   },
-  "chunk:C:/Users/Admin/Desktop/testing/src/pages/NotFoundPage.jsx": {
+  "chunk:src/pages/NotFoundPage.jsx": {
     "hash": "b59542e37e495ee34c3a1af47776cc5bffe5fe6d",
     "version": "1",
     "fileName": "assets/NotFoundPage.v1.js"
