@@ -5,7 +5,7 @@ import { createHash } from 'node:crypto'
 import { defineConfig } from 'vite'
 import react from '@vitejs/plugin-react'
 
-const buildVersion = '4'
+const buildVersion = '5'
 const versionStateFile = '.vite-file-versions.json'
 
 const normalizePath = (value) => value.replaceAll('\\', '/')
