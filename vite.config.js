@@ -10,7 +10,7 @@ const versionStateFile = '.vite-file-versions.json'
 
 const normalizePath = (value) => value.replaceAll('\\', '/')
 
-const stripVersionTag = (fileName) => fileName.replace(/\.v\d+(?=\.[^./]+$)/, '')
+const stripVersionTag = (fileName) => fileName.replace(/\.v\d+(?=\.[^./]+$)/, '');
 
 const addVersionTag = (fileName, version) => {
   const withoutVersion = stripVersionTag(fileName)
@@ -27,6 +27,7 @@ const asBuffer = (source) => {
 
 const isTextAsset = (fileName) => /\.(css|js|html|json|map|svg|txt)$/i.test(fileName)
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
+const stripAssetsPrefix = (value) => value.replace(/^assets\//, '')
 
 const selectiveVersionPlugin = (selectedVersion) => {
   let rootDir = process.cwd()
@@ -102,7 +103,23 @@ const selectiveVersionPlugin = (selectedVersion) => {
 
       if (renameMap.size === 0) return
 
-      const replacePattern = [...renameMap.keys()]
+      const textReplaceMap = new Map()
+      const addTextReplacement = (from, to) => {
+        if (!from || !to || from === to) return
+        textReplaceMap.set(from, to)
+      }
+
+      for (const [oldName, newName] of renameMap.entries()) {
+        addTextReplacement(oldName, newName)
+        addTextReplacement(`/${oldName}`, `/${newName}`)
+
+        const oldBaseName = stripAssetsPrefix(oldName)
+        const newBaseName = stripAssetsPrefix(newName)
+        addTextReplacement(oldBaseName, newBaseName)
+        addTextReplacement(`./${oldBaseName}`, `./${newBaseName}`)
+      }
+
+      const replacePattern = [...textReplaceMap.keys()]
         .sort((a, b) => b.length - a.length)
         .map((name) => escapeRegExp(name))
         .join('|')
@@ -110,7 +127,7 @@ const selectiveVersionPlugin = (selectedVersion) => {
 
       const replaceInText = (text) => {
         if (!matcher || !text) return text
-        return text.replace(matcher, (found) => renameMap.get(found) || found)
+        return text.replace(matcher, (found) => textReplaceMap.get(found) || found)
       }
 
       for (const item of Object.values(bundle)) {
