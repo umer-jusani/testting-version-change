@@ -28,6 +28,7 @@ const asBuffer = (source) => {
 const isTextAsset = (fileName) => /\.(css|js|html|json|map|svg|txt)$/i.test(fileName)
 const escapeRegExp = (value) => value.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')
 const stripAssetsPrefix = (value) => value.replace(/^assets\//, '')
+const isJavaScriptFile = (fileName) => /\.js$/i.test(fileName)
 
 const selectiveVersionPlugin = (selectedVersion) => {
   let rootDir = process.cwd()
@@ -81,7 +82,10 @@ const selectiveVersionPlugin = (selectedVersion) => {
         const prev = previousState[key]
         const versionToUse = prev && prev.hash === contentHash ? prev.version : selectedVersion
 
-        const newFileName = addVersionTag(fileNameWithoutVersion, versionToUse)
+        // Keep non-JS assets (like CSS) unversioned.
+        const newFileName = isJavaScriptFile(fileNameWithoutVersion)
+          ? addVersionTag(fileNameWithoutVersion, versionToUse)
+          : fileNameWithoutVersion
         if (newFileName !== normalizedOld) {
           renameMap.set(normalizedOld, newFileName)
         }
