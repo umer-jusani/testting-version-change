@@ -1,5 +1,5 @@
 function ContactPage() {
-  return <h2>Contact Page</h2>
+  return <h2>Contactsssssssssss Page</h2>
 }
 
 export default ContactPage
