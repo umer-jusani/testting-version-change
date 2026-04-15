@@ -1,6 +1,7 @@
 import { lazy, Suspense } from 'react'
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom'
 import './App.css'
+import LazyLoadErrorBoundary from './components/LazyLoadErrorBoundary.jsx'
 
 const HomePage = lazy(() => import('./pages/HomePage.jsx'))
 const AboutPage = lazy(() => import('./pages/AboutPage.jsx'))
@@ -37,16 +38,18 @@ function AppLayout() {
       </header>
 
       <main className="page-content">
-        <Suspense fallback={<p>Loading page...</p>}>
-          <Routes>
-            <Route path="/" element={<HomePage />} />
-            <Route path="/about" element={<AboutPage />} />
-            <Route path="/services" element={<ServicesPage />} />
-            <Route path="/blog" element={<BlogPage />} />
-            <Route path="/contact" element={<ContactPage />} />
-            <Route path="*" element={<NotFoundPage />} />
-          </Routes>
-        </Suspense>
+        <LazyLoadErrorBoundary>
+          <Suspense fallback={<p>Loading page...</p>}>
+            <Routes>
+              <Route path="/" element={<HomePage />} />
+              <Route path="/about" element={<AboutPage />} />
+              <Route path="/services" element={<ServicesPage />} />
+              <Route path="/blog" element={<BlogPage />} />
+              <Route path="/contact" element={<ContactPage />} />
+              <Route path="*" element={<NotFoundPage />} />
+            </Routes>
+          </Suspense>
+        </LazyLoadErrorBoundary>
       </main>
     </div>
   )
