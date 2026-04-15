@@ -18,3 +18,26 @@ export async function fetchManifestAndLog() {
 
   return null
 }
+
+export async function retryImportFromManifest(manifestKey, importError) {
+  const manifest = await fetchManifestAndLog()
+  const manifestEntry = manifest?.[manifestKey]
+
+  if (!manifestEntry?.file) {
+    throw importError
+  }
+
+  const retryPath = `/${manifestEntry.file}`
+  console.log(`Retrying lazy page from manifest for ${manifestKey}:`, retryPath)
+
+  return import(/* @vite-ignore */ retryPath)
+}
+
+export async function importWithManifestRetry(importer, manifestKey) {
+  try {
+    return await importer()
+  } catch (error) {
+    console.error(`Lazy import failed for ${manifestKey}:`, error)
+    return retryImportFromManifest(manifestKey, error)
+  }
+}

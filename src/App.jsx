@@ -2,13 +2,26 @@ import { lazy, Suspense } from 'react'
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom'
 import './App.css'
 import LazyLoadErrorBoundary from './components/LazyLoadErrorBoundary.jsx'
+import { importWithManifestRetry } from './utils/manifest.js'
 
-const HomePage = lazy(() => import('./pages/HomePage.jsx'))
-const AboutPage = lazy(() => import('./pages/AboutPage.jsx'))
-const ServicesPage = lazy(() => import('./pages/ServicesPage.jsx'))
-const BlogPage = lazy(() => import('./pages/BlogPage.jsx'))
-const ContactPage = lazy(() => import('./pages/ContactPage.jsx'))
-const NotFoundPage = lazy(() => import('./pages/NotFoundPage.jsx'))
+const HomePage = lazy(() =>
+  importWithManifestRetry(() => import('./pages/HomePage.jsx'), 'src/pages/HomePage.jsx'),
+)
+const AboutPage = lazy(() =>
+  importWithManifestRetry(() => import('./pages/AboutPage.jsx'), 'src/pages/AboutPage.jsx'),
+)
+const ServicesPage = lazy(() =>
+  importWithManifestRetry(() => import('./pages/ServicesPage.jsx'), 'src/pages/ServicesPage.jsx'),
+)
+const BlogPage = lazy(() =>
+  importWithManifestRetry(() => import('./pages/BlogPage.jsx'), 'src/pages/BlogPage.jsx'),
+)
+const ContactPage = lazy(() =>
+  importWithManifestRetry(() => import('./pages/ContactPage.jsx'), 'src/pages/ContactPage.jsx'),
+)
+const NotFoundPage = lazy(() =>
+  importWithManifestRetry(() => import('./pages/NotFoundPage.jsx'), 'src/pages/NotFoundPage.jsx'),
+)
 
 function AppLayout() {
   const links = [
