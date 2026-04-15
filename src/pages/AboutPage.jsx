@@ -23,7 +23,7 @@ function AboutPage() {
 
   return (
     <>
-      <h2>About Pagessss</h2>
+      <h2>About Page</h2>
       <SampleInfo
         title="About Shared Component"
         text="Yeh reusable component About aur Contact dono pages me use ho raha hai."
