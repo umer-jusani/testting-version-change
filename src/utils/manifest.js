@@ -1,3 +1,13 @@
+const manifestRetryEventName = 'manifest-retry-status-change'
+
+function updateManifestRetryStatus(isRetrying, manifestKey) {
+  window.dispatchEvent(
+    new CustomEvent(manifestRetryEventName, {
+      detail: { isRetrying, manifestKey },
+    }),
+  )
+}
+
 export async function fetchManifestAndLog() {
   const manifestPaths = ['/manifest.json', '/dist/manifest.json']
 
@@ -38,6 +48,14 @@ export async function importWithManifestRetry(importer, manifestKey) {
     return await importer()
   } catch (error) {
     console.error(`Lazy import failed for ${manifestKey}:`, error)
-    return retryImportFromManifest(manifestKey, error)
+    updateManifestRetryStatus(true, manifestKey)
+
+    try {
+      return await retryImportFromManifest(manifestKey, error)
+    } finally {
+      updateManifestRetryStatus(false, manifestKey)
+    }
   }
 }
+
+export { manifestRetryEventName }

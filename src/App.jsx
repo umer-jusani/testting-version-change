@@ -1,8 +1,8 @@
-import { lazy, Suspense } from 'react'
+import { lazy, Suspense, useEffect, useState } from 'react'
 import { BrowserRouter, NavLink, Route, Routes } from 'react-router-dom'
 import './App.css'
 import LazyLoadErrorBoundary from './components/LazyLoadErrorBoundary.jsx'
-import { importWithManifestRetry } from './utils/manifest.js'
+import { importWithManifestRetry, manifestRetryEventName } from './utils/manifest.js'
 
 const HomePage = lazy(() =>
   importWithManifestRetry(() => import('./pages/HomePage.jsx'), 'src/pages/HomePage.jsx'),
@@ -24,6 +24,7 @@ const NotFoundPage = lazy(() =>
 )
 
 function AppLayout() {
+  const [isRefreshingBuild, setIsRefreshingBuild] = useState(false)
   const links = [
     { to: '/', label: 'Home' },
     { to: '/about', label: 'About' },
@@ -31,6 +32,18 @@ function AppLayout() {
     { to: '/blog', label: 'Blog' },
     { to: '/contact', label: 'Contact' },
   ]
+
+  useEffect(() => {
+    const handleManifestRetryStatus = (event) => {
+      setIsRefreshingBuild(Boolean(event.detail?.isRetrying))
+    }
+
+    window.addEventListener(manifestRetryEventName, handleManifestRetryStatus)
+
+    return () => {
+      window.removeEventListener(manifestRetryEventName, handleManifestRetryStatus)
+    }
+  }, [])
 
   return (
     <div className="app-container">
@@ -51,6 +64,12 @@ function AppLayout() {
       </header>
 
       <main className="page-content">
+        {isRefreshingBuild ? (
+          <div className="build-refresh-overlay" role="status" aria-live="polite">
+            <div className="build-refresh-spinner" />
+            <p>New build detected, fetching latest content...</p>
+          </div>
+        ) : null}
         <LazyLoadErrorBoundary>
           <Suspense fallback={<p>Loading page...</p>}>
             <Routes>
