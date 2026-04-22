@@ -1,6 +1,6 @@
-
-import { defineConfig } from 'vite'
-import react from '@vitejs/plugin-react'
+import { defineConfig } from "vite";
+import react from "@vitejs/plugin-react";
+import path from "node:path";
 
 // "dev" || "prod"
 const environment = "dev";
@@ -10,39 +10,22 @@ export default defineConfig({
   plugins: [react()],
   build: {
     outDir: `dist`,
-    manifest: 'manifest.json',
-    // rollupOptions: {
-    //   output: {
-    //     manualChunks(id) {
-    //       const normalizedId = id.replace(/\\/g, '/')
+    manifest: "manifest.json",
+    rollupOptions: {
+      output: {
+        manualChunks(id) {
+          const cleanId = id.split("?")[0].replace(/\\/g, "/");
 
-    //       if (normalizedId.includes('/node_modules/')) {
-    //         if (normalizedId.includes('/react-router-dom/') || normalizedId.includes('/react-router/')) {
-    //           return 'vendor-router'
-    //         }
+          const isTargetJsx =
+            cleanId.endsWith(".jsx") && cleanId.endsWith(".js");
 
-    //         if (normalizedId.includes('/react-dom/') || normalizedId.includes('/react/')) {
-    //           return 'vendor-react'
-    //         }
+          if (!isTargetJsx) {
+            return;
+          }
 
-    //         return 'vendor'
-    //       }
-
-    //       if (
-    //         normalizedId.includes('/src/components/SampleInfo.jsx') ||
-    //         normalizedId.includes('/src/utils/index.js')
-    //       ) {
-    //         return 'shared-pages'
-    //       }
-
-    //       if (
-    //         normalizedId.includes('/src/components/LazyLoadErrorBoundary.jsx') ||
-    //         normalizedId.includes('/src/utils/manifest.js')
-    //       ) {
-    //         return 'lazy-runtime'
-    //       }
-    //     },
-    //   },
-    // },
+          return path.basename(cleanId, ".jsx");
+        },
+      },
+    },
   },
-})
+});
