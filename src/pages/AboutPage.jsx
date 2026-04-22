@@ -5,7 +5,7 @@ import ContactPage from './ContactPage.jsx'
 function AboutPage() {
   return (
     <>
-      <h2>About Pagss</h2>
+      <h2>About Pagssss</h2>
       <SampleInfo
         title="About Shared Component"
         text="Yeh reusable component About aur Contact dono pages me use ho raha hai."
