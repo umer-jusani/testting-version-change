@@ -16,14 +16,16 @@ export default defineConfig({
         manualChunks(id) {
           const cleanId = id.split("?")[0].replace(/\\/g, "/");
 
-          const isTargetJsx =
-            cleanId.endsWith(".jsx") && cleanId.endsWith(".js");
+          const isTargetFile =
+            (cleanId.endsWith(".jsx") || cleanId.endsWith(".js")) &&
+            (cleanId.includes("/src/components/") ||
+              cleanId.includes("/src/pages/"));
 
-          if (!isTargetJsx) {
+          if (!isTargetFile) {
             return;
           }
 
-          return path.basename(cleanId, ".jsx");
+          return path.parse(cleanId).name;
         },
       },
     },
